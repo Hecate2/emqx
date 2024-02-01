@@ -98,10 +98,9 @@ jobs:
     - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
       if: success()
       with:
-        name: ${{ matrix.profile }}-${{ matrix.otp }}-${{ matrix.os }}
+        name: ${{ matrix.profile }}
         path: _packages/${{ matrix.profile }}/
         retention-days: 7
-        compression-level: 0
 
   linux:
     runs-on: [self-hosted, ephemeral, linux, "${{ matrix.arch }}"]
@@ -195,15 +194,13 @@ jobs:
         fi
     - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
       with:
-        name: ${{ matrix.profile }}-${{ matrix.otp }}-${{ matrix.arch }}-${{ matrix.os }}-${{ matrix.with_elixir == 'yes' && 'elixir' || 'erlang' }}
+        name: ${{ matrix.profile }}
         path: _packages/${{ matrix.profile }}/
         retention-days: 7
-        compression-level: 0
 
   publish_artifacts:
     runs-on: ubuntu-latest
     needs:
-      - mac
       - linux
     if: inputs.publish == 'true' || inputs.publish
     strategy:
@@ -214,9 +211,8 @@ jobs:
     steps:
     - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
       with:
-        pattern: ${{ matrix.profile }}-*
+        name: ${{ matrix.profile }}
         path: packages/${{ matrix.profile }}
-        merge-multiple: true
     - name: install dos2unix
       run: sudo apt-get update -y && sudo apt install -y dos2unix
     - name: get packages
