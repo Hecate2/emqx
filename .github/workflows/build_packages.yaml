@@ -138,7 +138,7 @@ jobs:
         with_elixir:
           - 'no'
         include:
-          - profile: emqx
+          - profile: ${{ inputs.profile }}
             otp: ${{ inputs.otp_vsn }}
             arch: x64
             os: ubuntu22.04
@@ -233,6 +233,9 @@ jobs:
     - name: upload to aws s3
       env:
         PROFILE: ${{ matrix.profile }}
+        REF_NAME: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}
+        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        AWS_CLOUDFRONT_ID: ${{ secrets.AWS_CLOUDFRONT_ID }}
       run: |
         set -eu
         if [ $PROFILE = 'emqx' ]; then
@@ -243,5 +246,5 @@ jobs:
             echo "unknown profile $PROFILE"
             exit 1
         fi
-        aws s3 cp --recursive packages/$PROFILE s3://${{ secrets.AWS_S3_BUCKET }}/$s3dir/${{ github.ref_name }}
-        aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_ID }} --paths "/$s3dir/${{ github.ref_name }}/*"
+        aws s3 cp --recursive packages/$PROFILE s3://$AWS_S3_BUCKET/$s3dir/$REF_NAME
+        aws cloudfront create-invalidation --distribution-id "$AWS_CLOUDFRONT_ID" --paths "/$s3dir/$REF_NAME/*"
