@@ -95,7 +95,7 @@ jobs:
         apple_developer_identity: ${{ secrets.APPLE_DEVELOPER_IDENTITY }}
         apple_developer_id_bundle: ${{ secrets.APPLE_DEVELOPER_ID_BUNDLE }}
         apple_developer_id_bundle_password: ${{ secrets.APPLE_DEVELOPER_ID_BUNDLE_PASSWORD }}
-    - uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+    - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
       if: success()
       with:
         name: ${{ matrix.profile }}-${{ matrix.otp }}-${{ matrix.os }}
@@ -198,6 +198,7 @@ jobs:
         name: ${{ matrix.profile }}-${{ matrix.otp }}-${{ matrix.arch }}-${{ matrix.os }}-${{ matrix.with_elixir == 'yes' && 'elixir' || 'erlang' }}
         path: _packages/${{ matrix.profile }}/
         retention-days: 7
+        compression-level: 0
 
   publish_artifacts:
     runs-on: ubuntu-latest
@@ -211,7 +212,7 @@ jobs:
         profile:
           - ${{ inputs.profile }}
     steps:
-    - uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+    - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
       with:
         pattern: ${{ matrix.profile }}-*
         path: packages/${{ matrix.profile }}
